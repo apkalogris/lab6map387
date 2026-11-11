@@ -88,7 +88,7 @@
     },
     classBreakInfos: [
       {
-        classMinValue: 900,
+        classMinValue: 920,
         classMaxValue: 962,
         symbol: {
           strokeStyle: '#AD0755',
@@ -97,8 +97,8 @@
         }
       },
       {
-        classMinValue: 850,
-        classMaxValue: 899,
+        classMinValue: 860,
+        classMaxValue: 919,
         symbol: {
           strokeStyle: '#B21D63',
           lineWidth: 6,
@@ -107,7 +107,7 @@
       },
       {
         classMinValue: 0,
-        classMaxValue: 849,
+        classMaxValue: 859,
         symbol: {
           strokeStyle: '#CA2070',
           lineWidth: 3.5,
@@ -136,9 +136,9 @@
           legend.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'legend');
             div.innerHTML = '<b>Gross Outflow from Cook County</b><br>' +
-              '<i class="line" style="height:8px; background:#AD0755"></i>10,000 to 25,000<br>' +
-              '<i class="line" style="height:5px; background:#B21D63"></i>5,000 to 9,999<br>' +
-              '<i class="line" style="height:2.5px; background:#CA2070"></i>1,000 to 4,999<br>' +
+              '<i class="line" style="height:8px; background:#AD0755"></i>920 to 962<br>' +
+              '<i class="line" style="height:5px; background:#B21D63"></i>860 to 919<br>' +
+              '<i class="line" style="height:2.5px; background:#CA2070"></i>Under 859<br>' +
               '<i class="dot" style="background:rgb(195,255,62); border:1px solid #555"></i>Origin (Cook County)<br>' +
               '<i class="dot" style="background:rgb(17,142,170)"></i>Destination county';
             return div;
