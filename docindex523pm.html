@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lab 6</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+
+        <!-- Load animation tweening library requirement for CanvasFlowMapLayer -->
+        <script src="https://unpkg.com/@tweenjs/tween.js@18.6.4/dist/tween.umd.js"></script>
+
+        <!-- Load CanvasFlowMapLayer -->
+        <script src="CanvasFlowmapLayer.js"></script>
+        <script type="text/javascript" src="cook.js"></script>
+        
+        <link href='https://fonts.googleapis.com/css?family=Acme' rel='stylesheet'>
+           
+        <style type="text/css">
+          html, body { margin: 0; padding: 0; height: 100%; }
+          #map { min-height: 100%; }
+            
+          .title {
+              padding: 6px 8px;
+              font-family: 'Acme';
+              font-size: 22px;
+              background: rgba(255,255,255,0.8);
+              box-shadow: 0 0 15px rgba(0,0,0,0.2);
+              border-radius: 5px;
+          }
+
+          .legend {
+              padding: 6px 8px;
+              font: 14px/20px Arial, Helvetica, sans-serif;
+              background: rgba(255,255,255,0.8);
+              box-shadow: 0 0 15px rgba(0,0,0,0.2);
+              border-radius: 5px;
+          }
+          .legend .line { display: inline-block; width: 30px; margin-right: 6px; vertical-align: middle; }
+          .legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+        </style>
+    </head>
+
+    <body>
+        <div id="map"></div>
+
+        <script type="text/javascript">
+          var map = L.map('map', {
+              center: [39.23, -97.47],
+              zoom: 4
+          });
+
+          L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles © Esri — Esri, DeLorme, NAVTEQ',
+            maxZoom: 11,
+            minZoom: 4
+          }).addTo(map);
+            
+          L.canvasFlowmapLayer(data, {
+  originAndDestinationFieldIds: {
+    originUniqueIdField: 'GEOID_A',
+    originGeometry: {
+      x: 'A_lon',
+      y: 'A_lat'
+    },
+    destinationUniqueIdField: 'GEOID_B',
+    destinationGeometry: {
+      x: 'B_lon',
+      y: 'B_lat'
+    }
+  },
+  pathDisplayMode: 'all',
+  animationStarted: true,
+  animationEasingFamily: 'Cubic',
+  animationEasingType: 'In',
+  animationDuration: 2000,
+  canvasBezierStyle: {
+    type: 'classBreaks',
+    field: 'Flow_A2B',
+    defaultSymbol: {
+      strokeStyle: '#CA2070',
+      lineWidth: 3,
+      lineCap: 'round'
+    },
+    classBreakInfos: [
+      {
+        classMinValue: 15000,
+        classMaxValue: 100000,
+        symbol: {
+          strokeStyle: '#AD0755',
+          lineWidth: 10,
+          lineCap: 'round'
+        }
+      },
+      {
+        classMinValue: 10000,
+        classMaxValue: 14999,
+        symbol: {
+          strokeStyle: '#B21D63',
+          lineWidth: 6,
+          lineCap: 'round'
+        }
+      },
+      {
+        classMinValue: 0,
+        classMaxValue: 9999,
+        symbol: {
+          strokeStyle: '#CA2070',
+          lineWidth: 3.5,
+          lineCap: 'round'
+        }
+      }
+    ]
+  },
+  onEachFeature: function (feature, layer) {
+    var p = feature.properties;
+    var atB = feature.geometry.coordinates[0] === p.B_lon;
+    var name = atB ? p.County_B + ', ' + p.State_B : p.County_A + ', ' + p.State_A;
+    layer.bindTooltip(name);
+  }
+}).addTo(map);
+        
+          var title = L.control({position: 'topright'});
+          title.onAdd = function (map) {
+              this._div = L.DomUtil.create('div', 'title');
+              this._div.innerHTML = "<h3>Top Gross Outflow from Cook County, Illinois</h3>";
+              return this._div;
+          };
+          title.addTo(map);
+
+          var legend = L.control({position: 'bottomright'});
+          legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = '<b>Gross Outflow from Cook County</b><br>' +
+              '<i class="line" style="height:8px; background:#AD0755"></i>10,000 to 25,000<br>' +
+              '<i class="line" style="height:5px; background:#B21D63"></i>5,000 to 9,999<br>' +
+              '<i class="line" style="height:2.5px; background:#CA2070"></i>1,000 to 4,999<br>' +
+              '<i class="dot" style="background:rgb(195,255,62); border:1px solid #555"></i>Origin (Cook County)<br>' +
+              '<i class="dot" style="background:rgb(17,142,170)"></i>Destination county';
+            return div;
+          };
+          legend.addTo(map);
+        </script>
+    </body>
+</html>
